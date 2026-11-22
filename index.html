@@ -422,12 +422,12 @@
   </rodapé>
 
   <roteiro>
-    // =============================================================
+    // ========================================================
     // CONFIGURAÇÃO OBRIGATÓRIA (Preencha com seus dados da Etapa 1)
-    // =============================================================
+    // =====================================================
     const CONFIGURAR = {
-      ROTEIRO_URL: https://script.google.com/a/macros/ccbgo.org.br/s/AKfycbygxHNQSycu-cUm8akw6rh_ry-mNAJLZ6TZR22UNT8EBcsSbcDLj-plovWhc1oHv78C/exec,
-      GOOGLE_CLIENTE_ID: ID: 126561811046-o545r5dtb0l5nj8ecpugphgq5qgpvhsr.apps.googleusercontent.com
+      ROTEIRO_URL: "https://script.google.com/a/macros/ccbgo.org.br/s/AKfycbygxHNQSycu-cUm8akw6rh_ry-mNAJLZ6TZR22UNT8EBcsSbcDLj-plovWhc1oHv78C/executivo
+      GOOGLE_CLIENTE_ID: ID: "126561811046-o545r5dtb0l5nj8ecpugphgq5qgpvhsr.apps.googleusercontent.com"
     };
 
     const ESTADO = {
@@ -450,9 +450,9 @@
     }
 
     função inicializarBotaoGoogle() {
-      const recipiente = documento.obterElementoPorId("btnGoogleContainer");
+      const destino = documento.obterElementoPorId("btnGoogleContainer");
       const msgErro = documento.obterElementoPorId("msgErroGoogle");
-      se (!recipiente) retornar;
+      se (!destino) retornar;
 
       if (!CONFIG.GOOGLE_CLIENT_ID || CONFIG.GOOGLE_CLIENT_ID.indexOf("COLE_AQUI") > -1) {
         msgErro.textContent = "Atenção: GOOGLE_CLIENT_ID ainda não configurado no arquivo index.html.";
