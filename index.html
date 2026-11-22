@@ -1,9 +1,11 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-BR" translate="no">
 <head>
   <meta charset="UTF-8" />
+  <meta name="google" content="notranslate" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Registro Digital de Presença — GID</title>
+  <link rel="icon" href="https://raw.githubusercontent.com/wanderleifernandessouza/arquivos-web/main/Logo%20-%20CCB%20sem%20BG.png" />
   <script src="https://accounts.google.com/gsi/client" async defer></script>
   <style>
     :root {
@@ -334,13 +336,11 @@
     </header>
 
     <section class="body">
-      <!-- Estado 1: Carregamento inicial -->
       <div id="boxLoading" class="alerta alerta-neutro">
         <div class="spinner"></div>
         <div>Verificando reuniões programadas para hoje...</div>
       </div>
 
-      <!-- Estado 2: Bloqueio (Sem reunião / Aguardando 30 min / Encerrada / Erro) -->
       <div id="boxBloqueio" class="hidden">
         <div id="msgBloqueio" class="alerta alerta-aviso"></div>
         <div style="text-align: center;">
@@ -348,21 +348,17 @@
         </div>
       </div>
 
-      <!-- Estado 3: Reunião aberta — Aviso Online + Autenticação Google + Formulário -->
       <div id="boxPrincipal" class="hidden">
-        <!-- Aviso em destaque exclusivo para reuniões ONLINE -->
         <div id="avisoOnlineTopo" class="alerta alerta-online hidden">
           <strong>💻 Reunião Online:</strong> Após preencher os campos da presença, surgirá um campo com o link para acessar a reunião.
         </div>
 
-        <!-- Passo A: Autenticação obrigatória com Google -->
         <div id="boxLoginGoogle" class="google-box">
           <p>Para confirmar sua identidade e liberar o formulário, entre com sua conta Google:</p>
           <div id="btnGoogleContainer"></div>
           <div id="msgErroGoogle" class="alerta alerta-erro hidden" style="margin-top: 12px; margin-bottom: 0;"></div>
         </div>
 
-        <!-- Passo B: Formulário liberado após autenticação Google -->
         <form id="formPresenca" class="hidden" onsubmit="enviarPresenca(event)">
           <div class="cracha-conta">
             <div>
@@ -399,83 +395,72 @@
         </form>
       </div>
 
-      <!-- Estado 4: Sucesso + Link do Zoom (somente Online) -->
       <div id="boxSucesso" class="hidden">
         <div id="tituloSucesso" class="alerta alerta-sucesso" style="font-weight: 700; text-align: center;"></div>
-        <dividir id="detalhesComprovante" classe="comprovante-dados"></dividir>
+        <div id="detalhesComprovante" class="comprovante-dados"></div>
 
-        <!-- Bloco oco automaticamente quando a reunião para Presencial -->
-        <dividir id="boxLinkZoom" classe="box-link-zoom oculto">
-          <p>🎥 Sua presença está confirmada! Clique baixo para entrar na sala da reunião:</p>
-          <a id="ancoraLinkZoom" href="#" alto="_em branco" relação="noopener noreferrer" classe="btn-zoom">Acesso Reunião Online</a>
-        </dividir>
-      </dividir>
-    </sessão>
-  </principal>
+        <div id="boxLinkZoom" class="box-link-zoom hidden">
+          <p>🎥 Sua presença está confirmada! Clique abaixo para entrar na sala da reunião:</p>
+          <a id="ancoraLinkZoom" href="#" target="_blank" rel="noopener noreferrer" class="btn-zoom">Acessar Reunião Online</a>
+        </div>
+      </div>
+    </section>
+  </main>
 
-  <rodapé classe="footer-gae">
-    <dividir classe="selo-gae">
-      <extensão>CCB</extensão>
-      <extensão>•</extensão>
-      <extensão>Desenvolvido por © 2026 [ GAE-GO DEV]</extensão>
-    </dividir>
-  </rodapé>
+  <footer class="footer-gae">
+    <div class="selo-gae">
+      <span>CCB</span>
+      <span>•</span>
+      <span>Desenvolvido por © 2026 [ GAE-GO DEV ]</span>
+    </div>
+  </footer>
 
-  <roteiro>
-    // ========================================================
-    // CONFIGURAÇÃO OBRIGATÓRIA (Preencha com seus dados da Etapa 1)
-    // =====================================================
-    const CONFIGURAR = {
-      ROTEIRO_URL: "https://script.google.com/a/macros/ccbgo.org.br/s/AKfycbygxHNQSycu-cUm8akw6rh_ry-mNAJLZ6TZR22UNT8EBcsSbcDLj-plovWhc1oHv78C/exec",
-      GOOGLE_CLIENTE_ID: "126561811046-o545r5dtb0l5nj8ecpugphgq5qgpvhsr.apps.googleusercontent.com"
+  <script>
+    const CONFIG = {
+      SCRIPT_URL: "https://script.google.com/macros/s/AKfycbygxHNQSycu-cUm8akw6rh_ry-mNAJLZ6TZR22UNT8EBcsSbcDLj-plovWhc1oHv78C/exec",
+      GOOGLE_CLIENT_ID: "126561811046-o545r5dtb0l5nj8ecpugphgq5qgpvhsr.apps.googleusercontent.com"
     };
 
     const ESTADO = {
-      Abertas: [],
-      administradores: [],
+      abertas: [],
+      administracoes: [],
       idToken: "",
-      e-mailGoogle: "",
+      emailGoogle: "",
       nomeGoogle: ""
     };
 
-    função decodificarJwtPayload(token) {
-      const base64Url = token.dividir(".")[1];
-      const base64 = base64Url.substituir(/-/g, "+").substituir(/_/g, "/");
-      const jsonPayload = decodificarComponente URIC(
-        atob(base64).dividir("").mapa(função(c) {
-          retornar "%" + ("00" + c.charCodeAt(0).corda de segurança(16)).fatiar(-2);
-        }).juntar("")
+    function decodificarJwtPayload(token) {
+      const base64Url = token.split(".")[1];
+      const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+      const jsonPayload = decodeURIComponent(
+        atob(base64).split("").map(function(c) {
+          return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
+        }).join("")
       );
-      retornar JSON.analisar(jsonPayload);
+      return JSON.parse(jsonPayload);
     }
 
-    função inicializarBotaoGoogle() {
-      const destino = documento.obterElementoPorId("btnGoogleContainer");
-      const msgErro = documento.obterElementoPorId("msgErroGoogle");
-      se (!destino) retornar;
+    function inicializarBotaoGoogle() {
+      const container = document.getElementById("btnGoogleContainer");
+      const msgErro = document.getElementById("msgErroGoogle");
+      if (!container) return;
 
-      se (!CONFIGURAR.ID_CLIENTE_DO GOOGLE || CONFIGURAR.ID_CLIENTE_DO GOOGLE.índiceDe("COLE_AQUI") > -1) {
-        msgErro.textoConteúdo = "Atenção: GOOGLE_CLIENT_ID ainda não configurado no arquivo index.html.";
-        msgErro.lista de classes.remover("escondido");
-        retornar;
+      if (typeof google === "undefined" || !google.accounts || !google.accounts.id) {
+        setTimeout(inicializarBotaoGoogle, 250);
+        return;
       }
 
-      se (tipo de Google-Google === "indefinido" || !Google-Google.contas || !Google-Google.contas.id) {
-        definirTempo limite(inicializarBotaoGoogle, 250);
-        retornar;
-      }
-
-      Google-Google.contas.id.inicializar({
-        cliente_id: CONFIGURAR.ID_CLIENTE_DO GOOGLE,
-        retorno de chamada: aoAutenticarGoogle,
-        seleção_automática: falso,
-        cancelar_ao_toque_fora: verdadeiro
+      google.accounts.id.initialize({
+        client_id: CONFIG.GOOGLE_CLIENT_ID,
+        callback: aoAutenticarGoogle,
+        auto_select: false,
+        cancel_on_tap_outside: true
       });
 
-      destino.HTML interno = "";
-      Google-Google.contas.id.Botão de renderização(destinatário, {
-        tema: "esboço",
-        tamanho: "grande",
+      container.innerHTML = "";
+      google.accounts.id.renderButton(container, {
+        theme: "outline",
+        size: "large",
         type: "standard",
         shape: "rectangular",
         text: "signin_with",
@@ -565,11 +550,6 @@
       document.getElementById("boxPrincipal").classList.add("hidden");
       document.getElementById("boxSucesso").classList.add("hidden");
 
-      if (!CONFIG.SCRIPT_URL || CONFIG.SCRIPT_URL.indexOf("COLE_AQUI") > -1) {
-        exibirBloqueio("⚙️ Configuração pendente: informe a SCRIPT_URL do Web App no arquivo index.html.", true);
-        return;
-      }
-
       try {
         const resp = await fetch(CONFIG.SCRIPT_URL + "?api=presenca_init", { method: "GET" });
         const data = await resp.json();
@@ -587,137 +567,135 @@
             const rAg = data.aguardando[0];
             exibirBloqueio(
               "⏳ <strong>Registro ainda não liberado.</strong><br><br>A reunião <strong>" + rAg.tipo +
-              "</forte> está previsto para iniciar às <forte>" + rAg.horaInicio +
+              "</strong> está prevista para iniciar às <strong>" + rAg.horaInicio +
               "</strong>.<br>O registro de presença será aberto automaticamente às <strong>" + rAg.horaAbertura + "</strong> (30 minutos antes).",
               false
             );
-          } outro se (dados.cerradas && dados.cerradas.comprimento > 0) {
-            const nomesEnc = dados.cerradas.mapa(função(x) { retornar x.tipo; }).juntar(", ");
+          } else if (data.encerradas && data.encerradas.length > 0) {
+            const nomesEnc = data.encerradas.map(function(x) { return x.tipo; }).join(", ");
             exibirBloqueio(
-              "🔒 <strong>Registro de presença encerrado.</strong><br><br>A reunião de hoje (<strong>" + nomesEnc + "</forte>) já teve o cerco registrado pela Secretaria.",
-              falso
+              "🔒 <strong>Registro de presença encerrado.</strong><br><br>A reunião de hoje (<strong>" + nomesEnc + "</strong>) já teve o encerramento registrado pela Secretaria.",
+              false
             );
-          } outro se (dados.semHorario && dados.semHorario.comprimento > 0) {
+          } else if (data.semHorario && data.semHorario.length > 0) {
             exibirBloqueio(
               "⚠️ A reunião de hoje está cadastrada sem <strong>Horário de Início</strong>. Solicite à Secretaria para preencher o horário no GID.",
-              falso
+              false
             );
-          } outro {
+          } else {
             exibirBloqueio(
-              "📅 <strong>Nenhuma reunião organizada para hoje (" + dados.hojeBR + ").</strong><br><br>O registro digital de presença física disponível apenas no dia da reunião, a partir de 30 minutos antes do início.",
-              falso
+              "📅 <strong>Nenhuma reunião agendada para hoje (" + data.hojeBR + ").</strong><br><br>O registro digital de presença fica disponível apenas no dia da reunião, a partir de 30 minutos antes do início.",
+              false
             );
           }
-          retornar;
+          return;
         }
 
-        // Preenche seleciona
-        const selReunião = documento.obterElementoPorId("selReuniao");
-        selReunião.HTML interno = "";
-        se (ESTADO.Abertas.Comprimento > 1) {
-          selReunião.HTML interno = '<option value="">-- Seleção para Reunião --</option>';
+        const selReuniao = document.getElementById("selReuniao");
+        selReuniao.innerHTML = "";
+        if (ESTADO.abertas.length > 1) {
+          selReuniao.innerHTML = '<option value="">-- Selecione a Reunião --</option>';
         }
-        ESTADO.Abertas.parágrafo cada cantarolar(diversidade(r) {
-          const optar = documento.criarElemento("opção");
-          optar.valentia = r.tipo;
-          optar.textoConteúdo = r.tipo + " (" + r.horaInicio + " • " + r.modalidade + ")";
-          selReunião.anexarCriança(optar);
+        ESTADO.abertas.forEach(function(r) {
+          const opt = document.createElement("option");
+          opt.value = r.tipo;
+          opt.textContent = r.tipo + " (" + r.horaInicio + " • " + r.modalidade + ")";
+          selReuniao.appendChild(opt);
         });
-        se (ESTADO.Abertas.Comprimento === 1) {
-          selReunião.valentia = ESTADO.Abertas[0].tipo;
+        if (ESTADO.abertas.length === 1) {
+          selReuniao.value = ESTADO.abertas[0].tipo;
         }
 
-        Seleção popular("selCargo", dados.cargas, "-- Seleção o Ministério / Carga --");
-        Seleção popular("selAdm", ESTADO.administradores, "-- Seleção a Administração / Setor --");
+        popularSelect("selCargo", data.cargos, "-- Selecione o Ministério / Cargo --");
+        popularSelect("selAdm", ESTADO.administracoes, "-- Selecione a Administração / Setor --");
 
         atualizarModalidadeSelecionada();
 
-        documento.obterElementoPorId("carregamento de caixa").lista de aulas.adicionário("escondido");
-        documento.obterElementoPorId("caixaPrincipal").lista de aulas.removedor("escondido");
+        document.getElementById("boxLoading").classList.add("hidden");
+        document.getElementById("boxPrincipal").classList.remove("hidden");
         inicializarBotaoGoogle();
-      } Pégar (errar) {
-        exibirBloqueio("⚠️ Falha ao conectar com o servidor: " + errar.mensagem, verdadeiro);
+      } catch (err) {
+        exibirBloqueio("⚠️ Falha ao conectar com o servidor: " + err.message, true);
       }
     }
 
-    diversidade exibirBloqueio(htmlMsg, éErro) {
-      documento.obterElementoPorId("carregamento de caixa").lista de aulas.adicionário("escondido");
-      const caixa = documento.obterElementoPorId("caixaBloqueio");
-      const mensagem = documento.obterElementoPorId("msgBloqueio");
-      mensagem.nome sim classe = éErro ? "alerta alerta-erro" : "alerta alerta-aviso";
-      mensagem.HTML interno = htmlMsg;
-      caixa.lista de aulas.removedor("escondido");
+    function exibirBloqueio(htmlMsg, isErro) {
+      document.getElementById("boxLoading").classList.add("hidden");
+      const box = document.getElementById("boxBloqueio");
+      const msg = document.getElementById("msgBloqueio");
+      msg.className = isErro ? "alerta alerta-erro" : "alerta alerta-aviso";
+      msg.innerHTML = htmlMsg;
+      box.classList.remove("hidden");
     }
 
-    assíncrono diversidade enviarPresença(e) {
-      e.prevenirPadrão();
-      const msgErro = documento.obterElementoPorId("msgErroEnvio");
-      const btn = documento.obterElementoPorId("btnConfirmarPresença");
-      msgErro.lista de aulas.adicionário("escondido");
+    async function enviarPresenca(e) {
+      e.preventDefault();
+      const msgErro = document.getElementById("msgErroEnvio");
+      const btn = document.getElementById("btnConfirmarPresenca");
+      msgErro.classList.add("hidden");
 
-      se (!ESTADO.idToken) {
-        msgErro.textoConteúdo = "É necessário autenticar com sua conta Google antes de enviar.";
-        msgErro.lista de aulas.removedor("escondido");
-        retornar;
+      if (!ESTADO.idToken) {
+        msgErro.textContent = "É necessário autenticar com sua conta Google antes de enviar.";
+        msgErro.classList.remove("hidden");
+        return;
       }
 
-      const carga útil = {
-        cacau: "registrador_presença",
+      const payload = {
+        acao: "registrar_presenca",
         idToken: ESTADO.idToken,
-        reunião: documento.obterElementoPorId("selReuniao").valentia,
-        nome: documento.obterElementoPorId("txtNome").valentia.aparar(),
-        carga: documento.obterElementoPorId("selCargo").valentia,
-        administrador: documento.obterElementoPorId("selAdm").valentia
+        reuniao: document.getElementById("selReuniao").value,
+        nome: document.getElementById("txtNome").value.trim(),
+        cargo: document.getElementById("selCargo").value,
+        administracao: document.getElementById("selAdm").value
       };
 
-      btn.desabilitado = verdadeiro;
-      btn.textoConteúdo = "⏳ Registro presença...";
+      btn.disabled = true;
+      btn.textContent = "⏳ Registrando presença...";
 
-      tentar {
-        // Tipo de conteúdo text/plain evita preflight OPTIONS (CORS) sem Google Apps Script
-        const resp = esperar ônibus(CONFIGURAR.ROTEIRO_URL, {
-          método: "POSTAGEM",
-          Cabos: { "Tipo de conteúdo": "texto/simples; conjunto de caracteres=utf-8" },
-          corpo: JSON.stringificar(carga útil)
+      try {
+        const resp = await fetch(CONFIG.SCRIPT_URL, {
+          method: "POST",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify(payload)
         });
-        const res = esperar resp.json();
+        const res = await resp.json();
 
-        se (!res.ok) {
-          lançar novo Erro(res.erro || "Não foi possível registrar a presença.");
+        if (!res.ok) {
+          throw new Error(res.erro || "Não foi possível registrar a presença.");
         }
 
-        documento.obterElementoPorId("caixaPrincipal").lista de aulas.adicionário("escondido");
-        documento.obterElementoPorId("boxSucesso").lista de aulas.removedor("escondido");
+        document.getElementById("boxPrincipal").classList.add("hidden");
+        document.getElementById("boxSucesso").classList.remove("hidden");
 
-        documento.obterElementoPorId("tituloSucesso").textoConteúdo = res.jaRegistrado
+        document.getElementById("tituloSucesso").textContent = res.jaRegistrado
           ? "✅ Sua presença já estava registrada para esta reunião!"
           : "✅ Presença registrada com sucesso!";
 
-        documento.obterElementoPorId("detalhesComprovante").HTML interno =
-          "<forte>Reunião:</forte> " + res.reunião + " (" + res.modalidade + ")<br>" +
-          "<forte>Participante:</forte> " + carga útil.nome + "<br>" +
-          "<strong>Ministério / Carga:</strong> " + carga útil.carga + "<br>" +
-          "<strong>Administração / Setor:</strong> " + carga útil.administrador + "<br>" +
-          "<strong>Conta Google:</strong> " + res.e-correio + "<br>" +
-          "<forte>Dados/Hora:</forte> " + res.carimbo;
+        document.getElementById("detalhesComprovante").innerHTML =
+          "<strong>Reunião:</strong> " + res.reuniao + " (" + res.modalidade + ")<br>" +
+          "<strong>Participante:</strong> " + payload.nome + "<br>" +
+          "<strong>Ministério / Cargo:</strong> " + payload.cargo + "<br>" +
+          "<strong>Administração / Setor:</strong> " + payload.administracao + "<br>" +
+          "<strong>Conta Google:</strong> " + res.email + "<br>" +
+          "<strong>Data/Hora:</strong> " + res.carimbo;
 
-        const caixaZoom = documento.obterElementoPorId("boxLinkZoom");
-        const ancoraZoom = documento.obterElementoPorId("ancoraLinkZoom");
-        se (res.modalidade === "Online" && res.linkReunião) {
-          ancoraZoom.href = res.linkReunião;
-          caixaZoom.lista de aulas.removedor("escondido");
-        } outro {
-          caixaZoom.lista de aulas.adicionário("escondido");
+        const boxZoom = document.getElementById("boxLinkZoom");
+        const ancoraZoom = document.getElementById("ancoraLinkZoom");
+        if (res.modalidade === "Online" && res.linkReuniao) {
+          ancoraZoom.href = res.linkReuniao;
+          boxZoom.classList.remove("hidden");
+        } else {
+          boxZoom.classList.add("hidden");
         }
-      } Pégar (errar) {
-        msgErro.textoConteúdo = "⚠️ " + errar.mensagem;
-        msgErro.lista de aulas.removedor("escondido");
-        btn.desabilitado = falso;
-        btn.textoConteúdo = "✅ Confirmar Presença";
+      } catch (err) {
+        msgErro.textContent = "⚠️ " + err.message;
+        msgErro.classList.remove("hidden");
+        btn.disabled = false;
+        btn.textContent = "✅ Confirmar Presença";
       }
     }
 
-    Janela.addEventListener("carregar", carregarDadosIniciais);
-  </roteiro>
-</corpo>
-</HTML>
+    window.addEventListener("load", carregarDadosIniciais);
+  </script>
+</body>
+</html>
