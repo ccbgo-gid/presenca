@@ -1,18 +1,18 @@
 <!DOCTYPE html>
-<HTML língua="pt-BR">
-<caboça>
-  <meta conjunto de caracteres="UTF-8" />
-  <meta nome="janela de visualização" conteúdo="largura=largura do dispositivo, escala inicial=1,0, escala máxima=1,0, escalar pelo usuário=não" />
-  <título>Registro Digital de Presença — GID</título>
-  <roteiro fonte="https://accounts.google.com/gsi/client" assíncrono adiar></roteiro>
-  <estilo>
-    :raiz {
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Registro Digital de Presença — GID</title>
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <style>
+    :root {
       --azul-ccb: #084265;
       --azul-claro: #156594;
       --verde-ok: #15803d;
       --verde-bg: #dcfce7;
-      --âmbar-bg: #fef3c7;
-      --âmbar-bd: #f59e0b;
+      --amber-bg: #fef3c7;
+      --amber-bd: #f59e0b;
       --amber-tx: #78350f;
       --erro-bg: #fee2e2;
       --erro-tx: #991b1b;
@@ -22,35 +22,35 @@
       --subtexto: #64748b;
     }
 
-    * { dimensionamento de caixa: caixa de fronteira; marco: 0; enchimento: 0; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
-    corpo {
-      família de fontes: -sistema apple, Fonte do sistema BlinkMac, "UI de sego", Roboto, Helvética, Arial, sem serifa;
-      fundo: gradiente linear(160graus, #e2e8f0 0%, #f8fafc 100%);
-      cor: var(--texto);
-      alta mínima: 100vh;
-      exibir: flexível;
-      direção flexível: coluna;
-      alinhar itens: centro;
-      justificar-conteúdo: início flexível;
-      enchimento: 20px 14px 32px 14px;
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: linear-gradient(160deg, #e2e8f0 0%, #f8fafc 100%);
+      color: var(--texto);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 20px 14px 32px 14px;
     }
 
-    .cartão {
-      largura: 100%;
-      largura máxima: 480px;
-      fundo: #ffffff;
-      raio de borda: 14px;
-      caixa-sombra: 0 10px 30px RGBA(8, 66, 101, 0,12);
-      transbordar: escondido;
-      fronteira: 1px sólido #e2e8f0;
+    .card {
+      width: 100%;
+      max-width: 480px;
+      background: #ffffff;
+      border-radius: 14px;
+      box-shadow: 0 10px 30px rgba(8, 66, 101, 0.12);
+      overflow: hidden;
+      border: 1px solid #e2e8f0;
     }
 
-    .cabeçalho {
-      fundo: #ffffff;
-      enchimento: 26px 24px 18px 24px;
-      alinhamento de texto: centro;
-      fundo da fronteira: 3px sólido var(--azul-ccb);
+    .header {
+      background: #ffffff;
+      padding: 26px 24px 18px 24px;
+      text-align: center;
+      border-bottom: 3px solid var(--azul-ccb);
     }
 
     .header img {
@@ -325,83 +325,83 @@
     }
   </style>
 </head>
-<corpo>
-  <principal classe="cartão">
-    <caboçalho classe="cabeçalho">
-      <imagem fonte="https://raw.githubusercontent.com/wanderleifernandessouza/arquivos-web/main/Logo%20-%20CCB%20sem%20BG.png" alt="Congregação Cristã no Brasil" />
+<body>
+  <main class="card">
+    <header class="header">
+      <img src="https://raw.githubusercontent.com/wanderleifernandessouza/arquivos-web/main/Logo%20-%20CCB%20sem%20BG.png" alt="Congregação Cristã no Brasil" />
       <h1>Registro Digital de Presença</h1>
-      <dividir id="lblDataHoje" classe="legenda">Carregando informações da reunião...</dividir>
-    </caboçalho>
+      <div id="lblDataHoje" class="subtitulo">Carregando informações da reunião...</div>
+    </header>
 
-    <sessão classe="corpo">
+    <section class="body">
       <!-- Estado 1: Carregamento inicial -->
-      <dividir id="carregamento de caixa" classe="alerta alerta-neutro">
-        <dividir classe="girador"></dividir>
-        <dividir>Verificando reuniões programadas para hoje...</dividir>
-      </dividir>
+      <div id="boxLoading" class="alerta alerta-neutro">
+        <div class="spinner"></div>
+        <div>Verificando reuniões programadas para hoje...</div>
+      </div>
 
       <!-- Estado 2: Bloqueio (Sem reunião / Aguardando 30 min / Encerrada / Erro) -->
-      <dividir id="caixaBloqueio" classe="escondido">
-        <dividir id="msgBloqueio" classe="alerta alerta-aviso"></dividir>
-        <dividir estilo="alinhamento de texto: centro;">
-          <botão tipo="botão" classe="btn-secundário" clicar em="carregarDadosIniciais()">🔄 Status Atualizar</botão>
-        </dividir>
-      </dividir>
+      <div id="boxBloqueio" class="hidden">
+        <div id="msgBloqueio" class="alerta alerta-aviso"></div>
+        <div style="text-align: center;">
+          <button type="button" class="btn-secundario" onclick="carregarDadosIniciais()">🔄 Atualizar Status</button>
+        </div>
+      </div>
 
       <!-- Estado 3: Reunião aberta — Aviso Online + Autenticação Google + Formulário -->
-      <dividir id="caixaPrincipal" classe="escondido">
+      <div id="boxPrincipal" class="hidden">
         <!-- Aviso em destaque exclusivo para reuniões ONLINE -->
-        <dividir id="avisoOnlineTopo" classe="alerta alerta-online oculto">
-          <forte>💻 Reunião Online:</forte> Após preencher os campos da presença, surgirá um campo com o link para acessar a reunião.
-        </dividir>
+        <div id="avisoOnlineTopo" class="alerta alerta-online hidden">
+          <strong>💻 Reunião Online:</strong> Após preencher os campos da presença, surgirá um campo com o link para acessar a reunião.
+        </div>
 
         <!-- Passo A: Autenticação obrigatória com Google -->
-        <dividir id="boxLoginGoogle" classe="caixa do Google">
+        <div id="boxLoginGoogle" class="google-box">
           <p>Para confirmar sua identidade e liberar o formulário, entre com sua conta Google:</p>
-          <dividir id="btnGoogleContainer"></dividir>
-          <dividir id="msgErroGoogle" classe="alerta alerta-erro escondido" estilo="margem superior: 12px; margem inferior: 0;"></dividir>
-        </dividir>
+          <div id="btnGoogleContainer"></div>
+          <div id="msgErroGoogle" class="alerta alerta-erro hidden" style="margin-top: 12px; margin-bottom: 0;"></div>
+        </div>
 
         <!-- Passo B: Formulário liberado após autenticação Google -->
-        <forma id="formPresença" classe="escondido" em invejar="enviarPresenca(evento)">
-          <dividir classe="cracha-conta">
-            <dividir>
-              <dividir estilo="cor: #64748b; tamanho da fonte: 11px;">Identidade confirmada pelo Google:</dividir>
-              <dividir id="lblEmailVerificado" classe="e-mail"></dividir>
-            </dividir>
-            <botão tipo="botão" classe="btn-trocar" clicar em="trocarContaGoogle()">Trocar conta</botão>
-          </dividir>
+        <form id="formPresenca" class="hidden" onsubmit="enviarPresenca(event)">
+          <div class="cracha-conta">
+            <div>
+              <div style="color: #64748b; font-size: 11px;">Identidade confirmada pelo Google:</div>
+              <div id="lblEmailVerificado" class="email"></div>
+            </div>
+            <button type="button" class="btn-trocar" onclick="trocarContaGoogle()">Trocar conta</button>
+          </div>
 
-          <dividir classe="grupo de formulários">
-            <rótulo parágrafo="selReuniao">Seleção a Reunião <extensão classe="req">*</extensão></rótulo>
-            <selecionário id="selReuniao" classe="controle de forma" necessário mudança="atualizarModalidadeSelecionada()"></selecionário>
-          </dividir>
+          <div class="form-group">
+            <label for="selReuniao">Selecione a Reunião <span class="req">*</span></label>
+            <select id="selReuniao" class="form-control" required onchange="atualizarModalidadeSelecionada()"></select>
+          </div>
 
-          <dividir classe="grupo de formulários">
-            <rótulo parágrafo="txtNome">Nome Completo <extensão classe="req">*</extensão></rótulo>
-            <entrada tipo="texto" id="txtNome" classe="controle de forma" espanhol reservado="Digite seu nome completo" Comprimento máximo="160" necessário />
-          </dividir>
+          <div class="form-group">
+            <label for="txtNome">Nome Completo <span class="req">*</span></label>
+            <input type="text" id="txtNome" class="form-control" placeholder="Digite seu nome completo" maxlength="160" required />
+          </div>
 
-          <dividir classe="grupo de formulários">
-            <rótulo parágrafo="selCargo">Ministério ou Carga <extensão classe="req">*</extensão></rótulo>
-            <selecionário id="selCargo" classe="controle de forma" necessário></selecionário>
-          </dividir>
+          <div class="form-group">
+            <label for="selCargo">Ministério ou Cargo <span class="req">*</span></label>
+            <select id="selCargo" class="form-control" required></select>
+          </div>
 
-          <dividir classe="grupo de formulários">
-            <rótulo parágrafo="selAdm">Administração / Setor <extensão classe="req">*</extensão></rótulo>
-            <entrada tipo="texto" id="filtroAdm" classe="filtro-adm" espanhol reservado="🔎 Filtrar Administração/Setor (opcional)..." entrada="filtrarSelectAdm(este.valor)" />
-            <selecionário id="selAdm" classe="controle de forma" necessário></selecionário>
-          </dividir>
+          <div class="form-group">
+            <label for="selAdm">Administração / Setor <span class="req">*</span></label>
+            <input type="text" id="filtroAdm" class="filtro-adm" placeholder="🔎 Filtrar Administração/Setor (opcional)..." oninput="filtrarSelectAdm(this.value)" />
+            <select id="selAdm" class="form-control" required></select>
+          </div>
 
-          <dividir id="msgErroEnvio" classe="alerta alerta-erro escondido"></dividir>
+          <div id="msgErroEnvio" class="alerta alerta-erro hidden"></div>
 
-          <botão tipo="enviar" id="btnConfirmarPresença" classe="btn-primário">✅ Confirmar Presença</botão>
-        </forma>
-      </dividir>
+          <button type="submit" id="btnConfirmarPresenca" class="btn-primario">✅ Confirmar Presença</button>
+        </form>
+      </div>
 
       <!-- Estado 4: Sucesso + Link do Zoom (somente Online) -->
-      <dividir id="boxSucesso" classe="escondido">
-        <dividir id="tituloSucesso" classe="alerta alerta-sucesso" estilo="peso da fonte: 700; alinhamento de texto: centro;"></dividir>
+      <div id="boxSucesso" class="hidden">
+        <div id="tituloSucesso" class="alerta alerta-sucesso" style="font-weight: 700; text-align: center;"></div>
         <dividir id="detalhesComprovante" classe="comprovante-dados"></dividir>
 
         <!-- Bloco oco automaticamente quando a reunião para Presencial -->
@@ -426,8 +426,8 @@
     // CONFIGURAÇÃO OBRIGATÓRIA (Preencha com seus dados da Etapa 1)
     // =====================================================
     const CONFIGURAR = {
-      ROTEIRO_URL: "https://script.google.com/a/macros/ccbgo.org.br/s/AKfycbygxHNQSycu-cUm8akw6rh_ry-mNAJLZ6TZR22UNT8EBcsSbcDLj-plovWhc1oHv78C/executivo
-      GOOGLE_CLIENTE_ID: ID: "126561811046-o545r5dtb0l5nj8ecpugphgq5qgpvhsr.apps.googleusercontent.com"
+      ROTEIRO_URL: "https://script.google.com/a/macros/ccbgo.org.br/s/AKfycbygxHNQSycu-cUm8akw6rh_ry-mNAJLZ6TZR22UNT8EBcsSbcDLj-plovWhc1oHv78C/exec",
+      GOOGLE_CLIENTE_ID: "126561811046-o545r5dtb0l5nj8ecpugphgq5qgpvhsr.apps.googleusercontent.com"
     };
 
     const ESTADO = {
@@ -454,28 +454,28 @@
       const msgErro = documento.obterElementoPorId("msgErroGoogle");
       se (!destino) retornar;
 
-      if (!CONFIG.GOOGLE_CLIENT_ID || CONFIG.GOOGLE_CLIENT_ID.indexOf("COLE_AQUI") > -1) {
-        msgErro.textContent = "Atenção: GOOGLE_CLIENT_ID ainda não configurado no arquivo index.html.";
-        msgErro.classList.remove("hidden");
-        return;
+      se (!CONFIGURAR.ID_CLIENTE_DO GOOGLE || CONFIGURAR.ID_CLIENTE_DO GOOGLE.índiceDe("COLE_AQUI") > -1) {
+        msgErro.textoConteúdo = "Atenção: GOOGLE_CLIENT_ID ainda não configurado no arquivo index.html.";
+        msgErro.lista de classes.remover("escondido");
+        retornar;
       }
 
-      if (typeof google === "undefined" || !google.accounts || !google.accounts.id) {
-        setTimeout(inicializarBotaoGoogle, 250);
-        return;
+      se (tipo de Google-Google === "indefinido" || !Google-Google.contas || !Google-Google.contas.id) {
+        definirTempo limite(inicializarBotaoGoogle, 250);
+        retornar;
       }
 
-      google.accounts.id.initialize({
-        client_id: CONFIG.GOOGLE_CLIENT_ID,
-        callback: aoAutenticarGoogle,
-        auto_select: false,
-        cancel_on_tap_outside: true
+      Google-Google.contas.id.inicializar({
+        cliente_id: CONFIGURAR.ID_CLIENTE_DO GOOGLE,
+        retorno de chamada: aoAutenticarGoogle,
+        seleção_automática: falso,
+        cancelar_ao_toque_fora: verdadeiro
       });
 
-      container.innerHTML = "";
-      google.accounts.id.renderButton(container, {
-        theme: "outline",
-        size: "large",
+      destino.HTML interno = "";
+      Google-Google.contas.id.Botão de renderização(destinatário, {
+        tema: "esboço",
+        tamanho: "grande",
         type: "standard",
         shape: "rectangular",
         text: "signin_with",
@@ -579,17 +579,17 @@
         }
 
         document.getElementById("lblDataHoje").textContent = "Data: " + data.hojeBR + " • Horário oficial: " + data.horaAtual;
-        ESTADO.Abertas = dados.Abertas || [];
-        ESTADO.administradores = dados.administradores || [];
+        ESTADO.abertas = data.abertas || [];
+        ESTADO.administracoes = data.administracoes || [];
 
-        se (ESTADO.Abertas.comprimento === 0) {
-          se (dados.aguardando && dados.aguardando.comprimento > 0) {
-            const rAg = dados.aguardando[0];
+        if (ESTADO.abertas.length === 0) {
+          if (data.aguardando && data.aguardando.length > 0) {
+            const rAg = data.aguardando[0];
             exibirBloqueio(
               "⏳ <strong>Registro ainda não liberado.</strong><br><br>A reunião <strong>" + rAg.tipo +
               "</forte> está previsto para iniciar às <forte>" + rAg.horaInicio +
-              "</forte>.<br>O registro de presença será aberto automaticamente às <forte>" + rAg.horaAbertura + "</forte> (30 minutos antes).",
-              falso
+              "</strong>.<br>O registro de presença será aberto automaticamente às <strong>" + rAg.horaAbertura + "</strong> (30 minutos antes).",
+              false
             );
           } outro se (dados.cerradas && dados.cerradas.comprimento > 0) {
             const nomesEnc = dados.cerradas.mapa(função(x) { retornar x.tipo; }).juntar(", ");
@@ -600,12 +600,12 @@
           } outro se (dados.semHorario && dados.semHorario.comprimento > 0) {
             exibirBloqueio(
               "⚠️ A reunião de hoje está cadastrada sem <strong>Horário de Início</strong>. Solicite à Secretaria para preencher o horário no GID.",
-              false
+              falso
             );
-          } else {
+          } outro {
             exibirBloqueio(
-              "📅 <strong>Nenhuma reunião agendada para hoje (" + data.hojeBR + ").</strong><br><br>O registro digital de presença fica disponível apenas no dia da reunião, a partir de 30 minutos antes do início.",
-              false
+              "📅 <strong>Nenhuma reunião organizada para hoje (" + dados.hojeBR + ").</strong><br><br>O registro digital de presença física disponível apenas no dia da reunião, a partir de 30 minutos antes do início.",
+              falso
             );
           }
           retornar;
@@ -614,10 +614,10 @@
         // Preenche seleciona
         const selReunião = documento.obterElementoPorId("selReuniao");
         selReunião.HTML interno = "";
-        se (ESTADO.Abertas.comprimento > 1) {
+        se (ESTADO.Abertas.Comprimento > 1) {
           selReunião.HTML interno = '<option value="">-- Seleção para Reunião --</option>';
         }
-        ESTADO.Abertas.para cada um(função(r) {
+        ESTADO.Abertas.parágrafo cada cantarolar(diversidade(r) {
           const optar = documento.criarElemento("opção");
           optar.valentia = r.tipo;
           optar.textoConteúdo = r.tipo + " (" + r.horaInicio + " • " + r.modalidade + ")";
@@ -632,24 +632,24 @@
 
         atualizarModalidadeSelecionada();
 
-        documento.obterElementoPorId("carregamento de caixa").lista de classes.adicionar("escondido");
-        documento.obterElementoPorId("caixaPrincipal").lista de classes.remover("escondido");
+        documento.obterElementoPorId("carregamento de caixa").lista de aulas.adicionário("escondido");
+        documento.obterElementoPorId("caixaPrincipal").lista de aulas.removedor("escondido");
         inicializarBotaoGoogle();
-      } pegar (errar) {
+      } Pégar (errar) {
         exibirBloqueio("⚠️ Falha ao conectar com o servidor: " + errar.mensagem, verdadeiro);
       }
     }
 
-    função exibirBloqueio(htmlMsg, éErro) {
-      documento.obterElementoPorId("carregamento de caixa").lista de classes.adicionar("escondido");
+    diversidade exibirBloqueio(htmlMsg, éErro) {
+      documento.obterElementoPorId("carregamento de caixa").lista de aulas.adicionário("escondido");
       const caixa = documento.obterElementoPorId("caixaBloqueio");
       const mensagem = documento.obterElementoPorId("msgBloqueio");
-      mensagem.nome da classe = éErro ? "alerta alerta-erro" : "alerta alerta-aviso";
+      mensagem.nome sim classe = éErro ? "alerta alerta-erro" : "alerta alerta-aviso";
       mensagem.HTML interno = htmlMsg;
       caixa.lista de aulas.removedor("escondido");
     }
 
-    assíncrono diversão enviarPresença(e) {
+    assíncrono diversidade enviarPresença(e) {
       e.prevenirPadrão();
       const msgErro = documento.obterElementoPorId("msgErroEnvio");
       const btn = documento.obterElementoPorId("btnConfirmarPresença");
