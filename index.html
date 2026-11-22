@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <HTML língua="pt-BR">
-<cabeça>
+<caboça>
   <meta conjunto de caracteres="UTF-8" />
-  <meta nome="janela de visualização" conteúdo="largura=largura do dispositivo, escala inicial=1,0, escala máxima=1,0, escalável pelo usuário=não" />
+  <meta nome="janela de visualização" conteúdo="largura=largura do dispositivo, escala inicial=1,0, escala máxima=1,0, escalar pelo usuário=não" />
   <título>Registro Digital de Presença — GID</título>
   <roteiro fonte="https://accounts.google.com/gsi/client" assíncrono adiar></roteiro>
   <estilo>
@@ -22,13 +22,13 @@
       --subtexto: #64748b;
     }
 
-    * { dimensionamento de caixa: caixa de fronteira; margem: 0; enchimento: 0; }
+    * { dimensionamento de caixa: caixa de fronteira; marco: 0; enchimento: 0; }
 
     corpo {
       família de fontes: -sistema apple, Fonte do sistema BlinkMac, "UI de sego", Roboto, Helvética, Arial, sem serifa;
       fundo: gradiente linear(160graus, #e2e8f0 0%, #f8fafc 100%);
       cor: var(--texto);
-      altura mínima: 100vh;
+      alta mínima: 100vh;
       exibir: flexível;
       direção flexível: coluna;
       alinhar itens: centro;
@@ -325,134 +325,134 @@
     }
   </style>
 </head>
-<body>
-  <main class="card">
-    <header class="header">
-      <img src="https://raw.githubusercontent.com/wanderleifernandessouza/arquivos-web/main/Logo%20-%20CCB%20sem%20BG.png" alt="Congregação Cristã no Brasil" />
+<corpo>
+  <principal classe="cartão">
+    <caboçalho classe="cabeçalho">
+      <imagem fonte="https://raw.githubusercontent.com/wanderleifernandessouza/arquivos-web/main/Logo%20-%20CCB%20sem%20BG.png" alt="Congregação Cristã no Brasil" />
       <h1>Registro Digital de Presença</h1>
-      <div id="lblDataHoje" class="subtitulo">Carregando informações da reunião...</div>
-    </header>
+      <dividir id="lblDataHoje" classe="legenda">Carregando informações da reunião...</dividir>
+    </caboçalho>
 
-    <section class="body">
+    <sessão classe="corpo">
       <!-- Estado 1: Carregamento inicial -->
-      <div id="boxLoading" class="alerta alerta-neutro">
-        <div class="spinner"></div>
-        <div>Verificando reuniões programadas para hoje...</div>
-      </div>
+      <dividir id="carregamento de caixa" classe="alerta alerta-neutro">
+        <dividir classe="girador"></dividir>
+        <dividir>Verificando reuniões programadas para hoje...</dividir>
+      </dividir>
 
       <!-- Estado 2: Bloqueio (Sem reunião / Aguardando 30 min / Encerrada / Erro) -->
-      <div id="boxBloqueio" class="hidden">
-        <div id="msgBloqueio" class="alerta alerta-aviso"></div>
-        <div style="text-align: center;">
-          <button type="button" class="btn-secundario" onclick="carregarDadosIniciais()">🔄 Atualizar Status</button>
-        </div>
-      </div>
+      <dividir id="caixaBloqueio" classe="escondido">
+        <dividir id="msgBloqueio" classe="alerta alerta-aviso"></dividir>
+        <dividir estilo="alinhamento de texto: centro;">
+          <botão tipo="botão" classe="btn-secundário" clicar em="carregarDadosIniciais()">🔄 Status Atualizar</botão>
+        </dividir>
+      </dividir>
 
       <!-- Estado 3: Reunião aberta — Aviso Online + Autenticação Google + Formulário -->
-      <div id="boxPrincipal" class="hidden">
+      <dividir id="caixaPrincipal" classe="escondido">
         <!-- Aviso em destaque exclusivo para reuniões ONLINE -->
-        <div id="avisoOnlineTopo" class="alerta alerta-online hidden">
-          <strong>💻 Reunião Online:</strong> Após preencher os campos da presença, surgirá um campo com o link para acessar a reunião.
-        </div>
+        <dividir id="avisoOnlineTopo" classe="alerta alerta-online oculto">
+          <forte>💻 Reunião Online:</forte> Após preencher os campos da presença, surgirá um campo com o link para acessar a reunião.
+        </dividir>
 
         <!-- Passo A: Autenticação obrigatória com Google -->
-        <div id="boxLoginGoogle" class="google-box">
+        <dividir id="boxLoginGoogle" classe="caixa do Google">
           <p>Para confirmar sua identidade e liberar o formulário, entre com sua conta Google:</p>
-          <div id="btnGoogleContainer"></div>
-          <div id="msgErroGoogle" class="alerta alerta-erro hidden" style="margin-top: 12px; margin-bottom: 0;"></div>
-        </div>
+          <dividir id="btnGoogleContainer"></dividir>
+          <dividir id="msgErroGoogle" classe="alerta alerta-erro escondido" estilo="margem superior: 12px; margem inferior: 0;"></dividir>
+        </dividir>
 
         <!-- Passo B: Formulário liberado após autenticação Google -->
-        <form id="formPresenca" class="hidden" onsubmit="enviarPresenca(event)">
-          <div class="cracha-conta">
-            <div>
-              <div style="color: #64748b; font-size: 11px;">Identidade confirmada pelo Google:</div>
-              <div id="lblEmailVerificado" class="email"></div>
-            </div>
-            <button type="button" class="btn-trocar" onclick="trocarContaGoogle()">Trocar conta</button>
-          </div>
+        <forma id="formPresença" classe="escondido" em invejar="enviarPresenca(evento)">
+          <dividir classe="cracha-conta">
+            <dividir>
+              <dividir estilo="cor: #64748b; tamanho da fonte: 11px;">Identidade confirmada pelo Google:</dividir>
+              <dividir id="lblEmailVerificado" classe="e-mail"></dividir>
+            </dividir>
+            <botão tipo="botão" classe="btn-trocar" clicar em="trocarContaGoogle()">Trocar conta</botão>
+          </dividir>
 
-          <div class="form-group">
-            <label for="selReuniao">Selecione a Reunião <span class="req">*</span></label>
-            <select id="selReuniao" class="form-control" required onchange="atualizarModalidadeSelecionada()"></select>
-          </div>
+          <dividir classe="grupo de formulários">
+            <rótulo parágrafo="selReuniao">Seleção a Reunião <extensão classe="req">*</extensão></rótulo>
+            <selecionário id="selReuniao" classe="controle de forma" necessário mudança="atualizarModalidadeSelecionada()"></selecionário>
+          </dividir>
 
-          <div class="form-group">
-            <label for="txtNome">Nome Completo <span class="req">*</span></label>
-            <input type="text" id="txtNome" class="form-control" placeholder="Digite seu nome completo" maxlength="160" required />
-          </div>
+          <dividir classe="grupo de formulários">
+            <rótulo parágrafo="txtNome">Nome Completo <extensão classe="req">*</extensão></rótulo>
+            <entrada tipo="texto" id="txtNome" classe="controle de forma" espanhol reservado="Digite seu nome completo" Comprimento máximo="160" necessário />
+          </dividir>
 
-          <div class="form-group">
-            <label for="selCargo">Ministério ou Cargo <span class="req">*</span></label>
-            <select id="selCargo" class="form-control" required></select>
-          </div>
+          <dividir classe="grupo de formulários">
+            <rótulo parágrafo="selCargo">Ministério ou Carga <extensão classe="req">*</extensão></rótulo>
+            <selecionário id="selCargo" classe="controle de forma" necessário></selecionário>
+          </dividir>
 
-          <div class="form-group">
-            <label for="selAdm">Administração / Setor <span class="req">*</span></label>
-            <input type="text" id="filtroAdm" class="filtro-adm" placeholder="🔎 Filtrar Administração/Setor (opcional)..." oninput="filtrarSelectAdm(this.value)" />
-            <select id="selAdm" class="form-control" required></select>
-          </div>
+          <dividir classe="grupo de formulários">
+            <rótulo parágrafo="selAdm">Administração / Setor <extensão classe="req">*</extensão></rótulo>
+            <entrada tipo="texto" id="filtroAdm" classe="filtro-adm" espanhol reservado="🔎 Filtrar Administração/Setor (opcional)..." entrada="filtrarSelectAdm(este.valor)" />
+            <selecionário id="selAdm" classe="controle de forma" necessário></selecionário>
+          </dividir>
 
-          <div id="msgErroEnvio" class="alerta alerta-erro hidden"></div>
+          <dividir id="msgErroEnvio" classe="alerta alerta-erro escondido"></dividir>
 
-          <button type="submit" id="btnConfirmarPresenca" class="btn-primario">✅ Confirmar Presença</button>
-        </form>
-      </div>
+          <botão tipo="enviar" id="btnConfirmarPresença" classe="btn-primário">✅ Confirmar Presença</botão>
+        </forma>
+      </dividir>
 
       <!-- Estado 4: Sucesso + Link do Zoom (somente Online) -->
-      <div id="boxSucesso" class="hidden">
-        <div id="tituloSucesso" class="alerta alerta-sucesso" style="font-weight: 700; text-align: center;"></div>
-        <div id="detalhesComprovante" class="comprovante-dados"></div>
+      <dividir id="boxSucesso" classe="escondido">
+        <dividir id="tituloSucesso" classe="alerta alerta-sucesso" estilo="peso da fonte: 700; alinhamento de texto: centro;"></dividir>
+        <dividir id="detalhesComprovante" classe="comprovante-dados"></dividir>
 
-        <!-- Bloco oculto automaticamente quando a reunião for Presencial -->
-        <div id="boxLinkZoom" class="box-link-zoom hidden">
-          <p>🎥 Sua presença está confirmada! Clique abaixo para entrar na sala da reunião:</p>
-          <a id="ancoraLinkZoom" href="#" target="_blank" rel="noopener noreferrer" class="btn-zoom">Acessar Reunião Online</a>
-        </div>
-      </div>
-    </section>
-  </main>
+        <!-- Bloco oco automaticamente quando a reunião para Presencial -->
+        <dividir id="boxLinkZoom" classe="box-link-zoom oculto">
+          <p>🎥 Sua presença está confirmada! Clique baixo para entrar na sala da reunião:</p>
+          <a id="ancoraLinkZoom" href="#" alto="_em branco" relação="noopener noreferrer" classe="btn-zoom">Acesso Reunião Online</a>
+        </dividir>
+      </dividir>
+    </sessão>
+  </principal>
 
-  <footer class="footer-gae">
-    <div class="selo-gae">
-      <span>CCB</span>
-      <span>•</span>
-      <span>Desenvolvido por © 2026 [ GAE-GO DEV ]</span>
-    </div>
-  </footer>
+  <rodapé classe="footer-gae">
+    <dividir classe="selo-gae">
+      <extensão>CCB</extensão>
+      <extensão>•</extensão>
+      <extensão>Desenvolvido por © 2026 [ GAE-GO DEV]</extensão>
+    </dividir>
+  </rodapé>
 
-  <script>
-    // =========================================================================
+  <roteiro>
+    // =============================================================
     // CONFIGURAÇÃO OBRIGATÓRIA (Preencha com seus dados da Etapa 1)
-    // =========================================================================
-    const CONFIG = {
-      SCRIPT_URL: "COLE_AQUI_A_URL_EXEC_DO_SEU_WEB_APP",
-      GOOGLE_CLIENT_ID: "COLE_AQUI_SEU_CLIENT_ID.apps.googleusercontent.com"
+    // =============================================================
+    const CONFIGURAR = {
+      ROTEIRO_URL: https://script.google.com/a/macros/ccbgo.org.br/s/AKfycbygxHNQSycu-cUm8akw6rh_ry-mNAJLZ6TZR22UNT8EBcsSbcDLj-plovWhc1oHv78C/exec,
+      GOOGLE_CLIENTE_ID: ID: 126561811046-o545r5dtb0l5nj8ecpugphgq5qgpvhsr.apps.googleusercontent.com
     };
 
     const ESTADO = {
-      abertas: [],
-      administracoes: [],
+      Abertas: [],
+      administradores: [],
       idToken: "",
-      emailGoogle: "",
+      e-mailGoogle: "",
       nomeGoogle: ""
     };
 
-    function decodificarJwtPayload(token) {
-      const base64Url = token.split(".")[1];
-      const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
-      const jsonPayload = decodeURIComponent(
-        atob(base64).split("").map(function(c) {
-          return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
-        }).join("")
+    função decodificarJwtPayload(token) {
+      const base64Url = token.dividir(".")[1];
+      const base64 = base64Url.substituir(/-/g, "+").substituir(/_/g, "/");
+      const jsonPayload = decodificarComponente URIC(
+        atob(base64).dividir("").mapa(função(c) {
+          retornar "%" + ("00" + c.charCodeAt(0).corda de segurança(16)).fatiar(-2);
+        }).juntar("")
       );
-      return JSON.parse(jsonPayload);
+      retornar JSON.analisar(jsonPayload);
     }
 
-    function inicializarBotaoGoogle() {
-      const container = document.getElementById("btnGoogleContainer");
-      const msgErro = document.getElementById("msgErroGoogle");
-      if (!container) return;
+    função inicializarBotaoGoogle() {
+      const recipiente = documento.obterElementoPorId("btnGoogleContainer");
+      const msgErro = documento.obterElementoPorId("msgErroGoogle");
+      se (!recipiente) retornar;
 
       if (!CONFIG.GOOGLE_CLIENT_ID || CONFIG.GOOGLE_CLIENT_ID.indexOf("COLE_AQUI") > -1) {
         msgErro.textContent = "Atenção: GOOGLE_CLIENT_ID ainda não configurado no arquivo index.html.";
