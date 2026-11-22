@@ -144,6 +144,24 @@
       min-height: 44px;
     }
 
+    .plano-b-area {
+      margin-top: 16px;
+      padding-top: 12px;
+      border-top: 1px dashed #cbd5e1;
+    }
+
+    .btn-link-planob {
+      background: none;
+      border: none;
+      color: #475569;
+      font-size: 12px;
+      text-decoration: underline;
+      cursor: pointer;
+      padding: 4px 6px;
+    }
+
+    .btn-link-planob:hover { color: var(--azul-ccb); }
+
     .cracha-conta {
       display: flex;
       align-items: center;
@@ -163,12 +181,26 @@
       word-break: break-all;
     }
 
+    .cracha-planob {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      background: #fffbeb;
+      border: 1px solid #fcd34d;
+      border-radius: 8px;
+      padding: 10px 12px;
+      margin-bottom: 16px;
+      font-size: 12px;
+      color: #78350f;
+    }
+
     .btn-trocar {
-      background: none;
+      background: #ffffff;
       border: 1px solid #94a3b8;
       color: #475569;
       border-radius: 6px;
-      padding: 4px 8px;
+      padding: 5px 9px;
       font-size: 11px;
       font-weight: 600;
       cursor: pointer;
@@ -357,15 +389,31 @@
           <p>Para confirmar sua identidade e liberar o formulário, entre com sua conta Google:</p>
           <div id="btnGoogleContainer"></div>
           <div id="msgErroGoogle" class="alerta alerta-erro hidden" style="margin-top: 12px; margin-bottom: 0;"></div>
+
+          <div class="plano-b-area">
+            <button type="button" class="btn-link-planob" onclick="ativarPlanoBSemGoogle()">
+              Não tenho conta Google / Não consegui entrar
+            </button>
+          </div>
         </div>
 
         <form id="formPresenca" class="hidden" onsubmit="enviarPresenca(event)">
-          <div class="cracha-conta">
+          <!-- Crachá Padrão: Autenticado via Google -->
+          <div id="crachaContaGoogle" class="cracha-conta hidden">
             <div>
               <div style="color: #64748b; font-size: 11px;">Identidade confirmada pelo Google:</div>
               <div id="lblEmailVerificado" class="email"></div>
             </div>
             <button type="button" class="btn-trocar" onclick="trocarContaGoogle()">Trocar conta</button>
+          </div>
+
+          <!-- Crachá Plano B1: Sem Conta Google -->
+          <div id="crachaPlanoB" class="cracha-planob hidden">
+            <div>
+              <strong>⚠️ Acesso Excepcional (Sem conta Google)</strong><br />
+              <span>Informe seu Telefone/WhatsApp abaixo para validação da Secretaria.</span>
+            </div>
+            <button type="button" class="btn-trocar" onclick="trocarContaGoogle()">Usar Google</button>
           </div>
 
           <div class="form-group">
@@ -376,6 +424,12 @@
           <div class="form-group">
             <label for="txtNome">Nome Completo <span class="req">*</span></label>
             <input type="text" id="txtNome" class="form-control" placeholder="Digite seu nome completo" maxlength="160" required />
+          </div>
+
+          <!-- Campo exibido exclusivamente no Plano B1 (Sem Conta Google) -->
+          <div id="groupTelefonePlanoB" class="form-group hidden">
+            <label for="txtTelefonePlanoB">Telefone / WhatsApp (com DDD) <span class="req">*</span></label>
+            <input type="tel" id="txtTelefonePlanoB" class="form-control" placeholder="(62) 99999-9999" maxlength="16" oninput="mascaraTelefoneBR(this)" />
           </div>
 
           <div class="form-group">
@@ -403,6 +457,10 @@
           <p>🎥 Sua presença está confirmada! Clique abaixo para entrar na sala da reunião:</p>
           <a id="ancoraLinkZoom" href="#" target="_blank" rel="noopener noreferrer" class="btn-zoom">Acessar Reunião Online</a>
         </div>
+
+        <div id="boxLinkZoomPendente" class="alerta alerta-aviso hidden" style="margin-top: 14px; text-align: center;">
+          ⚠️ Sua presença foi confirmada, porém o link desta sala online ainda não está cadastrado na Secretaria. Solicite o link de acesso ao responsável.
+        </div>
       </div>
     </section>
   </main>
@@ -426,7 +484,8 @@
       administracoes: [],
       idToken: "",
       emailGoogle: "",
-      nomeGoogle: ""
+      nomeGoogle: "",
+      modoSemGoogle: false
     };
 
     function decodificarJwtPayload(token) {
@@ -440,20 +499,33 @@
       return JSON.parse(jsonPayload);
     }
 
-    function inicializarBotaoGoogle() {
+    function mascaraTelefoneBR(el) {
+      let v = String(el.value || "").replace(/\D/g, "").substring(0, 11);
+      if (v.length > 10) {
+        v = v.replace(/^(\d{2})(\d{5})(\d{4}).*/, "($1) $2-$3");
+      } else if (v.length > 6) {
+        v = v.replace(/^(\d{2})(\d{4})(\d{0,4}).*/, "($1) $2-$3");
+      } else if (v.length > 2) {
+        v = v.replace(/^(\d{2})(\d{0,5})/, "($1) $2");
+      } else if (v.length > 0) {
+        v = v.replace(/^(\d*)/, "($1");
+      }
+      el.value = v;
+    }
+
+    function inicializarBotaoGoogle(permitirAutoLogin) {
       const container = document.getElementById("btnGoogleContainer");
-      const msgErro = document.getElementById("msgErroGoogle");
       if (!container) return;
 
       if (typeof google === "undefined" || !google.accounts || !google.accounts.id) {
-        setTimeout(inicializarBotaoGoogle, 250);
+        setTimeout(function() { inicializarBotaoGoogle(permitirAutoLogin); }, 250);
         return;
       }
 
       google.accounts.id.initialize({
         client_id: CONFIG.GOOGLE_CLIENT_ID,
         callback: aoAutenticarGoogle,
-        auto_select: false,
+        auto_select: permitirAutoLogin !== false,
         cancel_on_tap_outside: true
       });
 
@@ -467,6 +539,10 @@
         logo_alignment: "left",
         width: 280
       });
+
+      if (permitirAutoLogin !== false) {
+        google.accounts.id.prompt();
+      }
     }
 
     function aoAutenticarGoogle(response) {
@@ -475,6 +551,7 @@
           throw new Error("Não foi possível obter a credencial do Google.");
         }
         const payload = decodificarJwtPayload(response.credential);
+        ESTADO.modoSemGoogle = false;
         ESTADO.idToken = response.credential;
         ESTADO.emailGoogle = payload.email || "";
         ESTADO.nomeGoogle = payload.name || "";
@@ -485,6 +562,11 @@
           txtNome.value = ESTADO.nomeGoogle;
         }
 
+        document.getElementById("crachaContaGoogle").classList.remove("hidden");
+        document.getElementById("crachaPlanoB").classList.add("hidden");
+        document.getElementById("groupTelefonePlanoB").classList.add("hidden");
+        document.getElementById("txtTelefonePlanoB").required = false;
+
         document.getElementById("boxLoginGoogle").classList.add("hidden");
         document.getElementById("formPresenca").classList.remove("hidden");
       } catch (e) {
@@ -494,16 +576,33 @@
       }
     }
 
-    function trocarContaGoogle() {
+    function ativarPlanoBSemGoogle() {
+      ESTADO.modoSemGoogle = true;
       ESTADO.idToken = "";
       ESTADO.emailGoogle = "";
+
+      document.getElementById("crachaContaGoogle").classList.add("hidden");
+      document.getElementById("crachaPlanoB").classList.remove("hidden");
+      document.getElementById("groupTelefonePlanoB").classList.remove("hidden");
+      document.getElementById("txtTelefonePlanoB").required = true;
+      document.getElementById("msgErroEnvio").classList.add("hidden");
+
+      document.getElementById("boxLoginGoogle").classList.add("hidden");
+      document.getElementById("formPresenca").classList.remove("hidden");
+    }
+
+    function trocarContaGoogle() {
+      ESTADO.modoSemGoogle = false;
+      ESTADO.idToken = "";
+      ESTADO.emailGoogle = "";
+      document.getElementById("txtTelefonePlanoB").required = false;
       document.getElementById("formPresenca").classList.add("hidden");
       document.getElementById("boxLoginGoogle").classList.remove("hidden");
       document.getElementById("msgErroEnvio").classList.add("hidden");
       if (typeof google !== "undefined" && google.accounts && google.accounts.id) {
         google.accounts.id.disableAutoSelect();
       }
-      inicializarBotaoGoogle();
+      inicializarBotaoGoogle(false);
     }
 
     function popularSelect(id, lista, placeholder) {
@@ -613,7 +712,7 @@
 
         document.getElementById("boxLoading").classList.add("hidden");
         document.getElementById("boxPrincipal").classList.remove("hidden");
-        inicializarBotaoGoogle();
+        inicializarBotaoGoogle(true);
       } catch (err) {
         exibirBloqueio("⚠️ Falha ao conectar com o servidor: " + err.message, true);
       }
@@ -634,15 +733,25 @@
       const btn = document.getElementById("btnConfirmarPresenca");
       msgErro.classList.add("hidden");
 
-      if (!ESTADO.idToken) {
+      const telVal = document.getElementById("txtTelefonePlanoB").value.trim();
+
+      if (!ESTADO.modoSemGoogle && !ESTADO.idToken) {
         msgErro.textContent = "É necessário autenticar com sua conta Google antes de enviar.";
+        msgErro.classList.remove("hidden");
+        return;
+      }
+
+      if (ESTADO.modoSemGoogle && telVal.replace(/\D/g, "").length < 10) {
+        msgErro.textContent = "Informe um Telefone / WhatsApp válido com DDD.";
         msgErro.classList.remove("hidden");
         return;
       }
 
       const payload = {
         acao: "registrar_presenca",
-        idToken: ESTADO.idToken,
+        modoSemGoogle: ESTADO.modoSemGoogle,
+        idToken: ESTADO.modoSemGoogle ? "" : ESTADO.idToken,
+        telefone: ESTADO.modoSemGoogle ? telVal : "",
         reuniao: document.getElementById("selReuniao").value,
         nome: document.getElementById("txtNome").value.trim(),
         cargo: document.getElementById("selCargo").value,
@@ -671,21 +780,31 @@
           ? "✅ Sua presença já estava registrada para esta reunião!"
           : "✅ Presença registrada com sucesso!";
 
+        const rotuloId = res.modoSemGoogle ? "Identificação:" : "Conta Google:";
         document.getElementById("detalhesComprovante").innerHTML =
           "<strong>Reunião:</strong> " + res.reuniao + " (" + res.modalidade + ")<br>" +
           "<strong>Participante:</strong> " + payload.nome + "<br>" +
           "<strong>Ministério / Cargo:</strong> " + payload.cargo + "<br>" +
           "<strong>Administração / Setor:</strong> " + payload.administracao + "<br>" +
-          "<strong>Conta Google:</strong> " + res.email + "<br>" +
+          "<strong>" + rotuloId + "</strong> " + res.email + "<br>" +
           "<strong>Data/Hora:</strong> " + res.carimbo;
 
         const boxZoom = document.getElementById("boxLinkZoom");
+        const boxZoomPend = document.getElementById("boxLinkZoomPendente");
         const ancoraZoom = document.getElementById("ancoraLinkZoom");
-        if (res.modalidade === "Online" && res.linkReuniao) {
-          ancoraZoom.href = res.linkReuniao;
-          boxZoom.classList.remove("hidden");
+
+        if (res.modalidade === "Online") {
+          if (res.linkReuniao) {
+            ancoraZoom.href = res.linkReuniao;
+            boxZoom.classList.remove("hidden");
+            boxZoomPend.classList.add("hidden");
+          } else {
+            boxZoom.classList.add("hidden");
+            boxZoomPend.classList.remove("hidden");
+          }
         } else {
           boxZoom.classList.add("hidden");
+          boxZoomPend.classList.add("hidden");
         }
       } catch (err) {
         msgErro.textContent = "⚠️ " + err.message;
