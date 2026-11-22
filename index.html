@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<HTML língua="pt-BR">
+<cabeça>
+  <meta conjunto de caracteres="UTF-8" />
+  <meta nome="janela de visualização" conteúdo="largura=largura do dispositivo, escala inicial=1,0, escala máxima=1,0, escalável pelo usuário=não" />
+  <título>Registro Digital de Presença — GID</título>
+  <roteiro fonte="https://accounts.google.com/gsi/client" assíncrono adiar></roteiro>
+  <estilo>
+    :raiz {
+      --azul-ccb: #084265;
+      --azul-claro: #156594;
+      --verde-ok: #15803d;
+      --verde-bg: #dcfce7;
+      --âmbar-bg: #fef3c7;
+      --âmbar-bd: #f59e0b;
+      --amber-tx: #78350f;
+      --erro-bg: #fee2e2;
+      --erro-tx: #991b1b;
+      --cinza-bg: #f1f5f9;
+      --borda: #cbd5e1;
+      --texto: #1e293b;
+      --subtexto: #64748b;
+    }
+
+    * { dimensionamento de caixa: caixa de fronteira; margem: 0; enchimento: 0; }
+
+    corpo {
+      família de fontes: -sistema apple, Fonte do sistema BlinkMac, "UI de sego", Roboto, Helvética, Arial, sem serifa;
+      fundo: gradiente linear(160graus, #e2e8f0 0%, #f8fafc 100%);
+      cor: var(--texto);
+      altura mínima: 100vh;
+      exibir: flexível;
+      direção flexível: coluna;
+      alinhar itens: centro;
+      justificar-conteúdo: início flexível;
+      enchimento: 20px 14px 32px 14px;
+    }
+
+    .cartão {
+      largura: 100%;
+      largura máxima: 480px;
+      fundo: #ffffff;
+      raio de borda: 14px;
+      caixa-sombra: 0 10px 30px RGBA(8, 66, 101, 0,12);
+      transbordar: escondido;
+      fronteira: 1px sólido #e2e8f0;
+    }
+
+    .cabeçalho {
+      fundo: #ffffff;
+      enchimento: 26px 24px 18px 24px;
+      alinhamento de texto: centro;
+      fundo da fronteira: 3px sólido var(--azul-ccb);
+    }
+
+    .header img {
+      max-width: 150px;
+      height: auto;
+      display: block;
+      margin: 0 auto 14px auto;
+    }
+
+    .header h1 {
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--azul-ccb);
+      letter-spacing: 0.4px;
+      text-transform: uppercase;
+    }
+
+    .header .subtitulo {
+      font-size: 12px;
+      color: var(--subtexto);
+      margin-top: 4px;
+    }
+
+    .body {
+      padding: 22px 22px 26px 22px;
+    }
+
+    .hidden { display: none !important; }
+
+    .alerta {
+      border-radius: 8px;
+      padding: 13px 14px;
+      font-size: 13px;
+      line-height: 1.45;
+      margin-bottom: 16px;
+    }
+
+    .alerta-online {
+      background: #eff6ff;
+      border: 1px solid #93c5fd;
+      border-left: 5px solid #1d4ed8;
+      color: #1e3a8a;
+    }
+
+    .alerta-aviso {
+      background: var(--amber-bg);
+      border: 1px solid var(--amber-bd);
+      color: var(--amber-tx);
+    }
+
+    .alerta-erro {
+      background: var(--erro-bg);
+      border: 1px solid #fca5a5;
+      color: var(--erro-tx);
+    }
+
+    .alerta-sucesso {
+      background: var(--verde-bg);
+      border: 1px solid #86efac;
+      color: #14532d;
+    }
+
+    .alerta-neutro {
+      background: #f8fafc;
+      border: 1px solid #cbd5e1;
+      color: #334155;
+      text-align: center;
+    }
+
+    .google-box {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 18px 16px;
+      text-align: center;
+      margin-bottom: 16px;
+    }
+
+    .google-box p {
+      font-size: 13px;
+      color: #334155;
+      margin-bottom: 14px;
+      line-height: 1.45;
+    }
+
+    #btnGoogleContainer {
+      display: flex;
+      justify-content: center;
+      min-height: 44px;
+    }
+
+    .cracha-conta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      background: #f0fdf4;
+      border: 1px solid #86efac;
+      border-radius: 8px;
+      padding: 10px 12px;
+      margin-bottom: 16px;
+      font-size: 12px;
+    }
+
+    .cracha-conta .email {
+      font-weight: 700;
+      color: #166534;
+      word-break: break-all;
+    }
+
+    .btn-trocar {
+      background: none;
+      border: 1px solid #94a3b8;
+      color: #475569;
+      border-radius: 6px;
+      padding: 4px 8px;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--azul-ccb);
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      margin-bottom: 6px;
+    }
+
+    .req { color: #dc2626; }
+
+    .form-control {
+      width: 100%;
+      padding: 11px 12px;
+      font-size: 14px;
+      color: var(--texto);
+      background: #ffffff;
+      border: 1px solid var(--borda);
+      border-radius: 8px;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .form-control:focus {
+      border-color: var(--azul-ccb);
+      box-shadow: 0 0 0 3px rgba(8, 66, 101, 0.14);
+    }
+
+    .filtro-adm {
+      width: 100%;
+      padding: 7px 10px;
+      font-size: 12px;
+      border: 1px dashed #94a3b8;
+      border-radius: 6px;
+      margin-bottom: 6px;
+      background: #f8fafc;
+      outline: none;
+    }
+
+    .btn-primario {
+      width: 100%;
+      padding: 13px 16px;
+      border: none;
+      border-radius: 8px;
+      background: var(--azul-ccb);
+      color: #ffffff;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.2s, opacity 0.2s;
+      margin-top: 6px;
+    }
+
+    .btn-primario:hover { background: var(--azul-claro); }
+    .btn-primario:disabled { opacity: 0.6; cursor: not-allowed; }
+
+    .btn-secundario {
+      display: inline-block;
+      padding: 9px 16px;
+      border: 1px solid var(--azul-ccb);
+      border-radius: 8px;
+      background: #ffffff;
+      color: var(--azul-ccb);
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    .box-link-zoom {
+      background: #eff6ff;
+      border: 2px solid #2563eb;
+      border-radius: 10px;
+      padding: 16px;
+      text-align: center;
+      margin-top: 16px;
+    }
+
+    .box-link-zoom p {
+      font-size: 13px;
+      color: #1e3a8a;
+      margin-bottom: 12px;
+      font-weight: 600;
+    }
+
+    .btn-zoom {
+      display: block;
+      width: 100%;
+      padding: 13px 16px;
+      border-radius: 8px;
+      background: #2563eb;
+      color: #ffffff;
+      text-decoration: none;
+      font-weight: 800;
+      font-size: 15px;
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.28);
+    }
+
+    .btn-zoom:hover { background: #1d4ed8; }
+
+    .comprovante-dados {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 12px 14px;
+      font-size: 13px;
+      line-height: 1.6;
+      color: #334155;
+      margin-top: 12px;
+    }
+
+    .spinner {
+      width: 30px;
+      height: 30px;
+      border: 3px solid #cbd5e1;
+      border-top-color: var(--azul-ccb);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 12px auto;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .footer-gae {
+      width: 100%;
+      max-width: 480px;
+      text-align: center;
+      margin-top: 18px;
+      padding: 10px;
+      color: #475569;
+      font-size: 11px;
+    }
+
+    .selo-gae {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 999px;
+      padding: 6px 14px;
+      font-weight: 700;
+      color: var(--azul-ccb);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    }
+  </style>
+</head>
+<body>
+  <main class="card">
+    <header class="header">
+      <img src="https://raw.githubusercontent.com/wanderleifernandessouza/arquivos-web/main/Logo%20-%20CCB%20sem%20BG.png" alt="Congregação Cristã no Brasil" />
+      <h1>Registro Digital de Presença</h1>
+      <div id="lblDataHoje" class="subtitulo">Carregando informações da reunião...</div>
+    </header>
+
+    <section class="body">
+      <!-- Estado 1: Carregamento inicial -->
+      <div id="boxLoading" class="alerta alerta-neutro">
+        <div class="spinner"></div>
+        <div>Verificando reuniões programadas para hoje...</div>
+      </div>
+
+      <!-- Estado 2: Bloqueio (Sem reunião / Aguardando 30 min / Encerrada / Erro) -->
+      <div id="boxBloqueio" class="hidden">
+        <div id="msgBloqueio" class="alerta alerta-aviso"></div>
+        <div style="text-align: center;">
+          <button type="button" class="btn-secundario" onclick="carregarDadosIniciais()">🔄 Atualizar Status</button>
+        </div>
+      </div>
+
+      <!-- Estado 3: Reunião aberta — Aviso Online + Autenticação Google + Formulário -->
+      <div id="boxPrincipal" class="hidden">
+        <!-- Aviso em destaque exclusivo para reuniões ONLINE -->
+        <div id="avisoOnlineTopo" class="alerta alerta-online hidden">
+          <strong>💻 Reunião Online:</strong> Após preencher os campos da presença, surgirá um campo com o link para acessar a reunião.
+        </div>
+
+        <!-- Passo A: Autenticação obrigatória com Google -->
+        <div id="boxLoginGoogle" class="google-box">
+          <p>Para confirmar sua identidade e liberar o formulário, entre com sua conta Google:</p>
+          <div id="btnGoogleContainer"></div>
+          <div id="msgErroGoogle" class="alerta alerta-erro hidden" style="margin-top: 12px; margin-bottom: 0;"></div>
+        </div>
+
+        <!-- Passo B: Formulário liberado após autenticação Google -->
+        <form id="formPresenca" class="hidden" onsubmit="enviarPresenca(event)">
+          <div class="cracha-conta">
+            <div>
+              <div style="color: #64748b; font-size: 11px;">Identidade confirmada pelo Google:</div>
+              <div id="lblEmailVerificado" class="email"></div>
+            </div>
+            <button type="button" class="btn-trocar" onclick="trocarContaGoogle()">Trocar conta</button>
+          </div>
+
+          <div class="form-group">
+            <label for="selReuniao">Selecione a Reunião <span class="req">*</span></label>
+            <select id="selReuniao" class="form-control" required onchange="atualizarModalidadeSelecionada()"></select>
+          </div>
+
+          <div class="form-group">
+            <label for="txtNome">Nome Completo <span class="req">*</span></label>
+            <input type="text" id="txtNome" class="form-control" placeholder="Digite seu nome completo" maxlength="160" required />
+          </div>
+
+          <div class="form-group">
+            <label for="selCargo">Ministério ou Cargo <span class="req">*</span></label>
+            <select id="selCargo" class="form-control" required></select>
+          </div>
+
+          <div class="form-group">
+            <label for="selAdm">Administração / Setor <span class="req">*</span></label>
+            <input type="text" id="filtroAdm" class="filtro-adm" placeholder="🔎 Filtrar Administração/Setor (opcional)..." oninput="filtrarSelectAdm(this.value)" />
+            <select id="selAdm" class="form-control" required></select>
+          </div>
+
+          <div id="msgErroEnvio" class="alerta alerta-erro hidden"></div>
+
+          <button type="submit" id="btnConfirmarPresenca" class="btn-primario">✅ Confirmar Presença</button>
+        </form>
+      </div>
+
+      <!-- Estado 4: Sucesso + Link do Zoom (somente Online) -->
+      <div id="boxSucesso" class="hidden">
+        <div id="tituloSucesso" class="alerta alerta-sucesso" style="font-weight: 700; text-align: center;"></div>
+        <div id="detalhesComprovante" class="comprovante-dados"></div>
+
+        <!-- Bloco oculto automaticamente quando a reunião for Presencial -->
+        <div id="boxLinkZoom" class="box-link-zoom hidden">
+          <p>🎥 Sua presença está confirmada! Clique abaixo para entrar na sala da reunião:</p>
+          <a id="ancoraLinkZoom" href="#" target="_blank" rel="noopener noreferrer" class="btn-zoom">Acessar Reunião Online</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer-gae">
+    <div class="selo-gae">
+      <span>CCB</span>
+      <span>•</span>
+      <span>Desenvolvido por © 2026 [ GAE-GO DEV ]</span>
+    </div>
+  </footer>
+
+  <script>
+    // =========================================================================
+    // CONFIGURAÇÃO OBRIGATÓRIA (Preencha com seus dados da Etapa 1)
+    // =========================================================================
+    const CONFIG = {
+      SCRIPT_URL: "COLE_AQUI_A_URL_EXEC_DO_SEU_WEB_APP",
+      GOOGLE_CLIENT_ID: "COLE_AQUI_SEU_CLIENT_ID.apps.googleusercontent.com"
+    };
+
+    const ESTADO = {
+      abertas: [],
+      administracoes: [],
+      idToken: "",
+      emailGoogle: "",
+      nomeGoogle: ""
+    };
+
+    function decodificarJwtPayload(token) {
+      const base64Url = token.split(".")[1];
+      const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+      const jsonPayload = decodeURIComponent(
+        atob(base64).split("").map(function(c) {
+          return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
+        }).join("")
+      );
+      return JSON.parse(jsonPayload);
+    }
+
+    function inicializarBotaoGoogle() {
+      const container = document.getElementById("btnGoogleContainer");
+      const msgErro = document.getElementById("msgErroGoogle");
+      if (!container) return;
+
+      if (!CONFIG.GOOGLE_CLIENT_ID || CONFIG.GOOGLE_CLIENT_ID.indexOf("COLE_AQUI") > -1) {
+        msgErro.textContent = "Atenção: GOOGLE_CLIENT_ID ainda não configurado no arquivo index.html.";
+        msgErro.classList.remove("hidden");
+        return;
+      }
+
+      if (typeof google === "undefined" || !google.accounts || !google.accounts.id) {
+        setTimeout(inicializarBotaoGoogle, 250);
+        return;
+      }
+
+      google.accounts.id.initialize({
+        client_id: CONFIG.GOOGLE_CLIENT_ID,
+        callback: aoAutenticarGoogle,
+        auto_select: false,
+        cancel_on_tap_outside: true
+      });
+
+      container.innerHTML = "";
+      google.accounts.id.renderButton(container, {
+        theme: "outline",
+        size: "large",
+        type: "standard",
+        shape: "rectangular",
+        text: "signin_with",
+        logo_alignment: "left",
+        width: 280
+      });
+    }
+
+    function aoAutenticarGoogle(response) {
+      try {
+        if (!response || !response.credential) {
+          throw new Error("Não foi possível obter a credencial do Google.");
+        }
+        const payload = decodificarJwtPayload(response.credential);
+        ESTADO.idToken = response.credential;
+        ESTADO.emailGoogle = payload.email || "";
+        ESTADO.nomeGoogle = payload.name || "";
+
+        document.getElementById("lblEmailVerificado").textContent = ESTADO.emailGoogle;
+        const txtNome = document.getElementById("txtNome");
+        if (txtNome && !txtNome.value && ESTADO.nomeGoogle) {
+          txtNome.value = ESTADO.nomeGoogle;
+        }
+
+        document.getElementById("boxLoginGoogle").classList.add("hidden");
+        document.getElementById("formPresenca").classList.remove("hidden");
+      } catch (e) {
+        const msgErro = document.getElementById("msgErroGoogle");
+        msgErro.textContent = "Falha na autenticação Google: " + e.message;
+        msgErro.classList.remove("hidden");
+      }
+    }
+
+    function trocarContaGoogle() {
+      ESTADO.idToken = "";
+      ESTADO.emailGoogle = "";
+      document.getElementById("formPresenca").classList.add("hidden");
+      document.getElementById("boxLoginGoogle").classList.remove("hidden");
+      document.getElementById("msgErroEnvio").classList.add("hidden");
+      if (typeof google !== "undefined" && google.accounts && google.accounts.id) {
+        google.accounts.id.disableAutoSelect();
+      }
+      inicializarBotaoGoogle();
+    }
+
+    function popularSelect(id, lista, placeholder) {
+      const sel = document.getElementById(id);
+      if (!sel) return;
+      sel.innerHTML = '<option value="">' + placeholder + "</option>";
+      (lista || []).forEach(function(item) {
+        const opt = document.createElement("option");
+        opt.value = item;
+        opt.textContent = item;
+        sel.appendChild(opt);
+      });
+    }
+
+    function filtrarSelectAdm(termo) {
+      const t = String(termo || "").trim().toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+      const sel = document.getElementById("selAdm");
+      const valorAtual = sel.value;
+      const filtrada = !t
+        ? ESTADO.administracoes
+        : ESTADO.administracoes.filter(function(a) {
+            return a.toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").indexOf(t) > -1;
+          });
+      popularSelect("selAdm", filtrada, "-- Selecione a Administração / Setor --");
+      if (filtrada.indexOf(valorAtual) > -1) sel.value = valorAtual;
+      else if (filtrada.length === 1) sel.value = filtrada[0];
+    }
+
+    function atualizarModalidadeSelecionada() {
+      const sel = document.getElementById("selReuniao");
+      const avisoOnline = document.getElementById("avisoOnlineTopo");
+      if (!sel || !avisoOnline) return;
+
+      const escolhida = ESTADO.abertas.find(function(r) { return r.tipo === sel.value; });
+      const temAlgumaOnline = ESTADO.abertas.some(function(r) { return r.modalidade === "Online"; });
+
+      const mostrarOnline = escolhida ? (escolhida.modalidade === "Online") : (ESTADO.abertas.length === 1 && temAlgumaOnline);
+      avisoOnline.classList.toggle("hidden", !mostrarOnline);
+    }
+
+    async function carregarDadosIniciais() {
+      document.getElementById("boxLoading").classList.remove("hidden");
+      document.getElementById("boxBloqueio").classList.add("hidden");
+      document.getElementById("boxPrincipal").classList.add("hidden");
+      document.getElementById("boxSucesso").classList.add("hidden");
+
+      if (!CONFIG.SCRIPT_URL || CONFIG.SCRIPT_URL.indexOf("COLE_AQUI") > -1) {
+        exibirBloqueio("⚙️ Configuração pendente: informe a SCRIPT_URL do Web App no arquivo index.html.", true);
+        return;
+      }
+
+      try {
+        const resp = await fetch(CONFIG.SCRIPT_URL + "?api=presenca_init", { method: "GET" });
+        const data = await resp.json();
+
+        if (!data.ok) {
+          throw new Error(data.erro || "Erro ao consultar reuniões no servidor.");
+        }
+
+        document.getElementById("lblDataHoje").textContent = "Data: " + data.hojeBR + " • Horário oficial: " + data.horaAtual;
+        ESTADO.Abertas = dados.Abertas || [];
+        ESTADO.administradores = dados.administradores || [];
+
+        se (ESTADO.Abertas.comprimento === 0) {
+          se (dados.aguardando && dados.aguardando.comprimento > 0) {
+            const rAg = dados.aguardando[0];
+            exibirBloqueio(
+              "⏳ <strong>Registro ainda não liberado.</strong><br><br>A reunião <strong>" + rAg.tipo +
+              "</forte> está previsto para iniciar às <forte>" + rAg.horaInicio +
+              "</forte>.<br>O registro de presença será aberto automaticamente às <forte>" + rAg.horaAbertura + "</forte> (30 minutos antes).",
+              falso
+            );
+          } outro se (dados.cerradas && dados.cerradas.comprimento > 0) {
+            const nomesEnc = dados.cerradas.mapa(função(x) { retornar x.tipo; }).juntar(", ");
+            exibirBloqueio(
+              "🔒 <strong>Registro de presença encerrado.</strong><br><br>A reunião de hoje (<strong>" + nomesEnc + "</forte>) já teve o cerco registrado pela Secretaria.",
+              falso
+            );
+          } outro se (dados.semHorario && dados.semHorario.comprimento > 0) {
+            exibirBloqueio(
+              "⚠️ A reunião de hoje está cadastrada sem <strong>Horário de Início</strong>. Solicite à Secretaria para preencher o horário no GID.",
+              false
+            );
+          } else {
+            exibirBloqueio(
+              "📅 <strong>Nenhuma reunião agendada para hoje (" + data.hojeBR + ").</strong><br><br>O registro digital de presença fica disponível apenas no dia da reunião, a partir de 30 minutos antes do início.",
+              false
+            );
+          }
+          retornar;
+        }
+
+        // Preenche seleciona
+        const selReunião = documento.obterElementoPorId("selReuniao");
+        selReunião.HTML interno = "";
+        se (ESTADO.Abertas.comprimento > 1) {
+          selReunião.HTML interno = '<option value="">-- Seleção para Reunião --</option>';
+        }
+        ESTADO.Abertas.para cada um(função(r) {
+          const optar = documento.criarElemento("opção");
+          optar.valentia = r.tipo;
+          optar.textoConteúdo = r.tipo + " (" + r.horaInicio + " • " + r.modalidade + ")";
+          selReunião.anexarCriança(optar);
+        });
+        se (ESTADO.Abertas.Comprimento === 1) {
+          selReunião.valentia = ESTADO.Abertas[0].tipo;
+        }
+
+        Seleção popular("selCargo", dados.cargas, "-- Seleção o Ministério / Carga --");
+        Seleção popular("selAdm", ESTADO.administradores, "-- Seleção a Administração / Setor --");
+
+        atualizarModalidadeSelecionada();
+
+        documento.obterElementoPorId("carregamento de caixa").lista de classes.adicionar("escondido");
+        documento.obterElementoPorId("caixaPrincipal").lista de classes.remover("escondido");
+        inicializarBotaoGoogle();
+      } pegar (errar) {
+        exibirBloqueio("⚠️ Falha ao conectar com o servidor: " + errar.mensagem, verdadeiro);
+      }
+    }
+
+    função exibirBloqueio(htmlMsg, éErro) {
+      documento.obterElementoPorId("carregamento de caixa").lista de classes.adicionar("escondido");
+      const caixa = documento.obterElementoPorId("caixaBloqueio");
+      const mensagem = documento.obterElementoPorId("msgBloqueio");
+      mensagem.nome da classe = éErro ? "alerta alerta-erro" : "alerta alerta-aviso";
+      mensagem.HTML interno = htmlMsg;
+      caixa.lista de aulas.removedor("escondido");
+    }
+
+    assíncrono diversão enviarPresença(e) {
+      e.prevenirPadrão();
+      const msgErro = documento.obterElementoPorId("msgErroEnvio");
+      const btn = documento.obterElementoPorId("btnConfirmarPresença");
+      msgErro.lista de aulas.adicionário("escondido");
+
+      se (!ESTADO.idToken) {
+        msgErro.textoConteúdo = "É necessário autenticar com sua conta Google antes de enviar.";
+        msgErro.lista de aulas.removedor("escondido");
+        retornar;
+      }
+
+      const carga útil = {
+        cacau: "registrador_presença",
+        idToken: ESTADO.idToken,
+        reunião: documento.obterElementoPorId("selReuniao").valentia,
+        nome: documento.obterElementoPorId("txtNome").valentia.aparar(),
+        carga: documento.obterElementoPorId("selCargo").valentia,
+        administrador: documento.obterElementoPorId("selAdm").valentia
+      };
+
+      btn.desabilitado = verdadeiro;
+      btn.textoConteúdo = "⏳ Registro presença...";
+
+      tentar {
+        // Tipo de conteúdo text/plain evita preflight OPTIONS (CORS) sem Google Apps Script
+        const resp = esperar ônibus(CONFIGURAR.ROTEIRO_URL, {
+          método: "POSTAGEM",
+          Cabos: { "Tipo de conteúdo": "texto/simples; conjunto de caracteres=utf-8" },
+          corpo: JSON.stringificar(carga útil)
+        });
+        const res = esperar resp.json();
+
+        se (!res.ok) {
+          lançar novo Erro(res.erro || "Não foi possível registrar a presença.");
+        }
+
+        documento.obterElementoPorId("caixaPrincipal").lista de aulas.adicionário("escondido");
+        documento.obterElementoPorId("boxSucesso").lista de aulas.removedor("escondido");
+
+        documento.obterElementoPorId("tituloSucesso").textoConteúdo = res.jaRegistrado
+          ? "✅ Sua presença já estava registrada para esta reunião!"
+          : "✅ Presença registrada com sucesso!";
+
+        documento.obterElementoPorId("detalhesComprovante").HTML interno =
+          "<forte>Reunião:</forte> " + res.reunião + " (" + res.modalidade + ")<br>" +
+          "<forte>Participante:</forte> " + carga útil.nome + "<br>" +
+          "<strong>Ministério / Carga:</strong> " + carga útil.carga + "<br>" +
+          "<strong>Administração / Setor:</strong> " + carga útil.administrador + "<br>" +
+          "<strong>Conta Google:</strong> " + res.e-correio + "<br>" +
+          "<forte>Dados/Hora:</forte> " + res.carimbo;
+
+        const caixaZoom = documento.obterElementoPorId("boxLinkZoom");
+        const ancoraZoom = documento.obterElementoPorId("ancoraLinkZoom");
+        se (res.modalidade === "Online" && res.linkReunião) {
+          ancoraZoom.href = res.linkReunião;
+          caixaZoom.lista de aulas.removedor("escondido");
+        } outro {
+          caixaZoom.lista de aulas.adicionário("escondido");
+        }
+      } Pégar (errar) {
+        msgErro.textoConteúdo = "⚠️ " + errar.mensagem;
+        msgErro.lista de aulas.removedor("escondido");
+        btn.desabilitado = falso;
+        btn.textoConteúdo = "✅ Confirmar Presença";
+      }
+    }
+
+    Janela.addEventListener("carregar", carregarDadosIniciais);
+  </roteiro>
+</corpo>
+</HTML>
